@@ -1,0 +1,187 @@
+#!/bin/bash
+# uwu
+# A simple bash wrapper for pacman.
+# Author: Josh Glendenning (pac), Irvan Malik (uwu)
+# Usage: uwu [options] <command> <args>...
+
+function log_info {
+    echo "$(tput setaf 4)$1$(tput sgr0)" >&2
+}
+function log_warn {
+    echo "$(tput setaf 3)$1$(tput sgr0)" >&2
+}
+function log_error {
+    echo "$(tput setaf 1)ERROR:$(tput sgr0) $1" >&2
+}
+
+function display_help {
+cat <<EOS
+Usage: 
+	uwu [options] <command> <args>...
+	uwu install <package>
+	uwu search <package>
+	uwu info <package>
+	uwu remove <package>
+	uwu hunt [args]...
+	uwu update [args]...
+	uwu upgrade [args]...
+
+Options:
+  -h | --help		Show this screen.
+  -v | --verbose 	Display the command to be passed through.
+  -l | --local		Do a local query.
+  --yay			Use yay instead of pacman.
+  --paru		Use paru instead of pacman.
+  --pacman		Force pacman if use_yay is enabled.
+EOS
+}
+
+CMD='pacman'
+
+# Try to detect if yaourt is installed
+if hash yay 2>/dev/null; then
+	use_yay=true
+fi
+
+if hash paru 2>/dev/null; then
+	use_paru=true
+	use_yay=false
+fi
+
+# Try to detect if we are root
+if [ "$(whoami)" != "root" ]; then
+	use_sudo=true
+	if hash doas 2>/dev/null; then
+		use_doas=true
+		use_sudo=false
+	fi
+fi
+
+# Match any [options]
+while :
+do
+	case "$1" in
+		-h | --help)
+			display_help  # Call your function
+			# no shifting needed here, we're done.
+			exit 0
+			;;
+		-v | --verbose)
+			verbose=true
+			shift
+			;;
+		-l | --local)
+			use_local=true
+			shift
+			;;
+		--yay)
+			use_yay=true
+			shift
+			;;
+		--paru)
+			use_paru=true
+			shift
+			;;
+		--pacman)
+			use_yay=false
+			use_paru=false
+			shift
+			;;
+		--dry-run)
+			dry_run=true
+			shift
+			;;
+		--) # End of all options
+			shift
+			break
+			;;
+		-*)
+			log_error "Unknown option: $1"
+			break
+			;;
+		*)  # No more options
+			break
+			;;
+	esac
+done
+
+# Use yay if use_yay is enabled
+if [ "$use_yay" = true ] ; then
+	CMD='yay'
+	# Disable sudo
+	use_sudo=false
+fi
+
+# Use paru if use_paru is enabled
+if [ "$use_paru" = true ] ; then
+	CMD='paru'
+	use_sudo=false
+fi
+
+# Update the $CMD if user_sudo is enabled
+# (and yay/paru is not enabled)
+if [ "$use_sudo" = true ] ; then
+	CMD="sudo $CMD"
+fi
+
+if [ "$use_doas" = true ] ; then
+	CMD="doas $CMD"
+fi
+
+# Match <command> and pass though to pacman
+case "$1" in
+	'install')
+		shift
+		CMD_ARGS="-S $@"
+		if [ "$use_local" = true ] ; then
+			CMD_ARGS="-U $@"
+		fi
+		;;
+	'search')
+		shift
+		CMD_ARGS="-Ss $@"
+		if [ "$use_local" = true ] ; then
+			CMD_ARGS="-Qs $@"
+		fi
+		;;
+	'info')
+		shift
+		CMD_ARGS="-Si $@"
+		;;
+	'update')
+		shift
+		CMD_ARGS="-Sy $@"
+		;;
+	'upgrade')
+		shift
+		CMD_ARGS="-Syu $@"
+		;;
+	'remove')
+		shift
+		CMD_ARGS="-Rns $@"
+		;;
+	'hunt')
+		shift
+		CMD_ARGS="-Rns $(pacman -Qtdq)"
+		;;
+	'clear')
+		shift
+		CMD_ARGS="-Scc"
+		;;
+	*)
+		log_error "Unknown command: $1"
+		exit 1
+		;;
+esac
+
+# echo the whole command if verbose is enabled
+if [ "$verbose" = true ]; then
+	log_info "=> $(tput sgr0)$CMD $CMD_ARGS"
+fi
+
+# Call the command
+if [ "$dry_run" = true ]; then
+	echo "$CMD $CMD_ARGS"
+else
+	$CMD $CMD_ARGS
+fi
