@@ -28,7 +28,7 @@ Clone this repository `git clone https://github.com/irvanmalik48/uwu.git`
 and then put the `bin` folder on your PATH.
 
 ```
-PATH=$PATH:{PATH_TO_LAPPY}/bin
+PATH=$PATH:{PATH_TO_UWU}/bin
 ```
 
 ## Usage
