@@ -10,8 +10,8 @@ function log_error {
     echo "$(tput setaf 1)ERROR: $1$(tput sgr0)" >&2
 }
 
-tempdir=/tmp/uwu
-installdir=/usr/bin/uwu
+tempdir='/tmp/uwu'
+installdir='/usr/bin/uwu'
 
 # Try to detect if we are root
 if [ "$(whoami)" != "root" ]; then
@@ -55,11 +55,11 @@ do
 done
 
 if [ -d "$tempdir" ]; then
-    rm -rd $tempdir
+    rm -r $tempdir
 fi
 
 if [ -d "$installdir" ]; then
-    rm -rd $installdir
+    rm -r $installdir
 fi
 
 log_info "Cloning uwu repo to /tmp/uwu"
