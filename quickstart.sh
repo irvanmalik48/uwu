@@ -10,7 +10,7 @@ function log_error {
     echo "$(tput setaf 1)ERROR: $1$(tput sgr0)" >&2
 }
 
-tempdir=/temp/uwu
+tempdir=/tmp/uwu
 installdir=/usr/bin/uwu
 
 # Try to detect if we are root
