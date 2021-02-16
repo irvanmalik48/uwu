@@ -37,8 +37,16 @@ PATH=$PATH:{PATH_TO_UWU}/bin
 Usage: 
 	uwu [options] <command> <args>...
 	uwu install <package>
+	uwu install-list <pkglist-dir>
+	uwu reinstall-all
 	uwu search <package>
 	uwu info <package>
+	uwu list
+	uwu list-bak <pkglist-dir>
+	uwu list-foreign
+	uwu list-native
+	uwu list-expnative
+	uwu list-devel
 	uwu remove <package>
 	uwu hunt [args]...
 	uwu update [args]...
@@ -61,7 +69,15 @@ uwu install		: yay -S
 uwu search		: yay -Ss
 uwu -l install		: yay -U
 uwu -l search		: yay -Qs
+uwu install-list	: yay -S --needed - < [pkglist-file]
+uwu reinstall-all	: yay -Qqn && yay -Qqm | yay -S -
 uwu info		: yay -Si
+uwu list		: yay -Qe
+uwu list-bak		: yay -Qqe > [pkglist-file]
+uwu list-foreign	: yay -Qm
+uwu list-native		: yay -Qn
+uwu list-expnative	: yay -Qent
+uwu list-devel		: yay -Qq | grep -Ee '-(bzr|cvs|darcs|git|hg|svn)$'
 uwu update		: yay -Sy
 uwu upgrade		: yay -Syu
 uwu remove		: yay -Rns
