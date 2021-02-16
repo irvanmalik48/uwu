@@ -10,9 +10,6 @@ function log_error {
     echo "$(tput setaf 1)ERROR: $1$(tput sgr0)" >&2
 }
 
-tempdir='/tmp/uwu'
-installdir='/usr/bin/uwu'
-
 # Try to detect if we are root
 if [ "$(whoami)" != "root" ]; then
     use_sudo=true
@@ -54,12 +51,12 @@ do
     esac
 done
 
-if [ -d "$tempdir" ]; then
-    rm -r $tempdir
+if [ -d /tmp/uwu ]; then
+    rm -rd /tmp/uwu
 fi
 
-if [ -d "$installdir" ]; then
-    rm -r $installdir
+if [ -d /usr/bin/uwu ]; then
+    rm -rd /usr/bin/uwu
 fi
 
 log_info "Cloning uwu repo to /tmp/uwu"
