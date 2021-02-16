@@ -19,8 +19,16 @@ cat <<EOS
 Usage: 
 	uwu [options] <command> <args>...
 	uwu install <package>
+	uwu install-list <pkglist-dir>
+	uwu reinstall-all
 	uwu search <package>
 	uwu info <package>
+	uwu list
+	uwu list-bak <pkglist-dir>
+	uwu list-foreign
+	uwu list-native
+	uwu list-expnative
+	uwu list-devel
 	uwu remove <package>
 	uwu hunt [args]...
 	uwu update [args]...
@@ -139,6 +147,14 @@ case "$1" in
 			CMD_ARGS="-U $@"
 		fi
 		;;
+	'install-list')
+		shift
+		CMD_ARGS="-S --needed - < $@"
+		;;
+	'reinstall-all')
+		shift
+		CMD_ARGS="-Qqn && $CMD -Qqm | $CMD -S -"
+		;;
 	'search')
 		shift
 		CMD_ARGS="-Ss $@"
@@ -149,6 +165,35 @@ case "$1" in
 	'info')
 		shift
 		CMD_ARGS="-Si $@"
+		if [ "$use_local" = true ] ; then
+			CMD_ARGS="-Qi $@"
+		fi
+		;;
+	'list')
+		shift
+		CMD_ARGS="-Qe"
+		;;
+	'list-bak')
+		shift
+		use_sudo=false
+		use_doas=false
+		CMD_ARGS="-Qqe > $@"
+		;;
+	'list-foreign')
+		shift
+		CMD_ARGS="-Qm"
+		;;
+	'list-native')
+		shift
+		CMD_ARGS="-Qn"
+		;;
+	'list-expnative')
+		shift
+		CMD_ARGS="-Qent"
+		;;
+	'list-devel')
+		shift
+		CMD_ARGS="-Qq | grep -Ee '-(bzr|cvs|darcs|git|hg|svn)$'"
 		;;
 	'update')
 		shift
@@ -164,7 +209,7 @@ case "$1" in
 		;;
 	'hunt')
 		shift
-		CMD_ARGS="-Rns $(pacman -Qtdq)"
+		CMD_ARGS="-Rns $($CMD -Qtdq)"
 		;;
 	'clear')
 		shift
