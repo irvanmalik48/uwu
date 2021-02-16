@@ -21,11 +21,14 @@ if [ "$(whoami)" != "root" ]; then
 		use_sudo=false
 	fi
 fi
+
 function do_sudo {
     if [ "$use_sudo" = true ]; then
-        sudo $@
-    else if [ "$use_doas" = true ]; then
-        doas $@
+        if [ "$use_doas" = true ]; then
+            doas $@
+        else
+            sudo $@
+        fi
     else
         $@
     fi
