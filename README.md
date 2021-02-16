@@ -59,8 +59,8 @@ Lappy will automatically use `paru` or `yay` (if `paru` not present) if it is in
 ```
 uwu install		: yay -S
 uwu search		: yay -Ss
-uwu -l install	: yay -U
-uwu -l search	: yay -Qs
+uwu -l install		: yay -U
+uwu -l search		: yay -Qs
 uwu info		: yay -Si
 uwu update		: yay -Sy
 uwu upgrade		: yay -Syu
