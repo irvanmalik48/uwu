@@ -24,11 +24,9 @@ fi
 
 function do_sudo {
     if [ "$use_sudo" = true ]; then
-        if [ "$use_doas" = true ]; then
-            doas $@
-        else
-            sudo $@
-        fi
+        sudo $@
+    elif [ "$use_doas" = true ]; then
+        doas $@
     else
         $@
     fi
