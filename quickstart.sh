@@ -10,13 +10,22 @@ function log_error {
     echo "$(tput setaf 1)ERROR: $1$(tput sgr0)" >&2
 }
 
+tempdir=/temp/uwu
+installdir=/usr/bin/uwu
+
 # Try to detect if we are root
 if [ "$(whoami)" != "root" ]; then
     use_sudo=true
+    if hash doas 2>/dev/null; then
+		use_doas=true
+		use_sudo=false
+	fi
 fi
 function do_sudo {
     if [ "$use_sudo" = true ]; then
         sudo $@
+    else if [ "$use_doas" = true ]; then
+        doas $@
     else
         $@
     fi
@@ -43,6 +52,14 @@ do
             ;;
     esac
 done
+
+if [ -d "$tempdir" ]; then
+    rm -rd $tempdir
+fi
+
+if [ -d "$installdir" ]; then
+    rm -rd $installdir
+fi
 
 log_info "Cloning uwu repo to /tmp/uwu"
 git clone https://github.com/irvanmalik48/uwu.git /tmp/uwu
