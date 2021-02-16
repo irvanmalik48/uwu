@@ -110,12 +110,14 @@ if [ "$use_yay" = true ] ; then
 	CMD='yay'
 	# Disable sudo
 	use_sudo=false
+	use_doas=false
 fi
 
 # Use paru if use_paru is enabled
 if [ "$use_paru" = true ] ; then
 	CMD='paru'
 	use_sudo=false
+	use_doas=false
 fi
 
 # Update the $CMD if user_sudo is enabled
