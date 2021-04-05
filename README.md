@@ -61,7 +61,7 @@ Options:
   --pacman		Force pacman if use_yay is enabled.
 ```
 
-Lappy will automatically use `paru` or `yay` (if `paru` not present) if it is installed, and will automatically use `sudo` if running pacman while not root.
+uwu will automatically use `paru` or `yay` (if `paru` not present) if it is installed, and will automatically use `sudo` if running pacman while not root.
 
 ## Equivalents
 ```
